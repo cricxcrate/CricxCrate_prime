@@ -1,0 +1,243 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CricxCrate – Live Cricket</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- SHAKA PLAYER (for MPD + DRM) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.9/shaka-player.compiled.js"></script>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
+  background:linear-gradient(180deg,#f8fafc,#eef2f7);
+  color:#111827;
+  user-select:none;
+}
+iframe{border:none}
+body.popup-active .main-content > :not(.player-wrap){
+  filter:blur(6px);
+  pointer-events:none;
+}
+.glass{
+  background:rgba(255,255,255,.72);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.45);
+  box-shadow:0 12px 30px rgba(0,0,0,.08);
+}
+.top-bar{
+  max-width:950px;
+  margin:14px auto;
+  padding:14px;
+  text-align:center;
+  font-weight:600;
+  border-radius:18px;
+}
+.player-wrap{
+  max-width:950px;
+  margin:0 auto;
+  background:#000;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 14px 30px rgba(0,0,0,.15);
+}
+.player-wrap video{
+  width:100%;
+  height:55vh;
+  background:#000;
+}
+@media(max-width:768px){
+  .player-wrap video{height:42vh}
+}
+.section{
+  max-width:950px;
+  margin:14px auto;
+  padding:18px;
+  border-radius:20px;
+  display:flex;
+  gap:14px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+.section h3{
+  width:100%;
+  text-align:center;
+  margin:0 0 6px;
+  font-size:16px;
+  font-weight:600;
+}
+.btn{
+  background:rgba(255,255,255,.9);
+  color:#FF6B6B;
+  padding:12px 22px;
+  border-radius:16px;
+  font-weight:600;
+  border:1px solid rgba(0,0,0,.08);
+  cursor:pointer;
+  text-decoration:none;
+  box-shadow:0 6px 14px rgba(0,0,0,.08);
+}
+.btn.primary{
+  background:#FF6B6B;
+  color:#fff;
+  border:none;
+}
+.btn:active,
+.popup-box a:active,
+.popup-box button:active{
+  transform:scale(.96);
+}
+.banner{
+  max-width:950px;
+  margin:20px auto;
+  padding:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  font-size:20px;
+  font-weight:600;
+  border-radius:22px;
+}
+.banner img{width:36px}
+.popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.35);
+  backdrop-filter:blur(6px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+.popup-box{
+  background:rgba(255,255,255,.75);
+  backdrop-filter:blur(18px);
+  padding:28px 22px;
+  border-radius:26px;
+  text-align:center;
+  max-width:340px;
+  width:90%;
+  border:1px solid rgba(255,255,255,.5);
+  box-shadow:0 25px 50px rgba(0,0,0,.2);
+}
+.popup-box h2{margin:0 0 8px}
+.popup-box p{margin:0 0 18px;color:#6b7280}
+.popup-box a,
+.popup-box button{
+  display:block;
+  width:100%;
+  margin-top:12px;
+  padding:14px;
+  border-radius:16px;
+  border:none;
+  font-weight:600;
+  cursor:pointer;
+  text-decoration:none;
+}
+.popup-join{background:#FF6B6B;color:#fff}
+.popup-done{background:rgba(255,255,255,.9);color:#FF6B6B}
+</style>
+</head>
+
+<body oncontextmenu="return false">
+
+<div class="popup" id="popup">
+  <div class="popup-box">
+    <h2>Welcome 🤩</h2>
+    <p>Join Telegram for live match updates</p>
+    <a class="popup-join" href="https://t.me/CricxCrate" target="_blank">Join @CricxCrate</a>
+    <button class="popup-done" onclick="closePopup()">Already Joined</button>
+  </div>
+</div>
+
+<div class="main-content">
+  <div class="top-bar glass">CricxCrate • Prime </div>
+
+  <div class="player-wrap">
+    <video id="video" controls autoplay playsinline></video>
+  </div>
+
+  <div class="section glass">
+    <h3>⚡ Join Telegram For Live Updates</h3>
+    <a class="btn primary" href="https://t.me/CricxCrate" target="_blank">Join Telegram</a>
+    <a class="btn" href="https://t.me/CricxCratelinks" target="_blank">All Channels</a>
+  </div>
+
+  <div class="section glass">
+    <h3>❤️ Share & Support</h3>
+    <button class="btn primary" onclick="sharePage()">Share</button>
+    <button class="btn" onclick="copyLink()">Copy Link</button>
+  </div>
+
+  <a href="https://t.me/CricxCrate" target="_blank" style="text-decoration:none;color:inherit">
+    <div class="banner glass">
+      <img src="https://telegram.org/img/t_logo.png">
+      Join @CricxCrate
+    </div>
+  </a>
+</div>
+
+<script>
+const popup = document.getElementById("popup");
+
+function copyLink(){
+  navigator.clipboard.writeText(location.href);
+  alert("Link copied!");
+}
+
+function sharePage(){
+  if(navigator.share){
+    navigator.share({title:"Live Cricket – CricxCrate", url:location.href});
+  }
+}
+
+function closePopup(){
+  popup.style.opacity="0";
+  setTimeout(()=>{
+    popup.style.display="none";
+    document.body.classList.remove("popup-active");
+    sessionStorage.setItem("joined","yes");
+  },300);
+}
+
+if(sessionStorage.getItem("joined")!=="yes"){
+  document.body.classList.add("popup-active");
+}else{
+  popup.style.display="none";
+}
+
+/* SHAKA PLAYER */
+async function initPlayer(){
+  const video=document.getElementById("video");
+  const player=new shaka.Player(video);
+
+  try{
+    await player.configure({
+      drm:{
+        clearKeys:{
+          "cd2266bd1085a92143007be26296daeb":
+          "1a21a3cbb8e8062c3a82135a47389c2b"
+        }
+      }
+    });
+
+    await player.load(
+      "https://a201aivottlinear-a.akamaihd.net/OTTB/lhr-nitro/live/clients/dash/enc/ryfoddshmd/out/v1/2298afadf64943adb0b44dc540ace1ce/cenc.mpd"
+    );
+
+    console.log("Stream loaded");
+  }catch(e){
+    console.error("Error loading stream:",e);
+  }
+}
+
+document.addEventListener("DOMContentLoaded",initPlayer);
+</script>
+
+</body>
+</html>
