@@ -2,11 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>CricxCrate – Live Cricket</title>
+<title>CricxCrate – Prime English Live</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- SHAKA PLAYER (for MPD + DRM) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.9/shaka-player.compiled.js"></script>
 
 <style>
 *{box-sizing:border-box}
@@ -44,15 +41,17 @@ body.popup-active .main-content > :not(.player-wrap){
   border-radius:20px;
   overflow:hidden;
   box-shadow:0 14px 30px rgba(0,0,0,.15);
+  position: relative;
+  aspect-ratio: 16/9;
 }
-.player-wrap video{
-  width:100%;
-  height:55vh;
-  background:#000;
+.player-wrap iframe{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
-@media(max-width:768px){
-  .player-wrap video{height:42vh}
-}
+
 .section{
   max-width:950px;
   margin:14px auto;
@@ -72,7 +71,7 @@ body.popup-active .main-content > :not(.player-wrap){
 }
 .btn{
   background:rgba(255,255,255,.9);
-  color:#FF6B6B;
+  color:#00a8e1;
   padding:12px 22px;
   border-radius:16px;
   font-weight:600;
@@ -82,7 +81,7 @@ body.popup-active .main-content > :not(.player-wrap){
   box-shadow:0 6px 14px rgba(0,0,0,.08);
 }
 .btn.primary{
-  background:#FF6B6B;
+  background:#00a8e1;
   color:#fff;
   border:none;
 }
@@ -104,6 +103,8 @@ body.popup-active .main-content > :not(.player-wrap){
   border-radius:22px;
 }
 .banner img{width:36px}
+
+/* POPUP */
 .popup{
   position:fixed;
   inset:0;
@@ -139,8 +140,8 @@ body.popup-active .main-content > :not(.player-wrap){
   cursor:pointer;
   text-decoration:none;
 }
-.popup-join{background:#FF6B6B;color:#fff}
-.popup-done{background:rgba(255,255,255,.9);color:#FF6B6B}
+.popup-join{background:#00a8e1;color:#fff}
+.popup-done{background:rgba(255,255,255,.9);color:#00a8e1}
 </style>
 </head>
 
@@ -150,21 +151,26 @@ body.popup-active .main-content > :not(.player-wrap){
   <div class="popup-box">
     <h2>Welcome 🤩</h2>
     <p>Join Telegram for live match updates</p>
-    <a class="popup-join" href="https://t.me/CricxCrate" target="_blank">Join @CricxCrate</a>
+    <a class="popup-join" href="Https://t.me/+t991_pRD-zs5NzY1" target="_blank">Join Channel</a>
     <button class="popup-done" onclick="closePopup()">Already Joined</button>
   </div>
 </div>
 
 <div class="main-content">
-  <div class="top-bar glass">CricxCrate • Prime </div>
+  <div class="top-bar glass">CricxCrate • Prime English</div>
 
   <div class="player-wrap">
-    <video id="video" controls autoplay playsinline></video>
+    <iframe 
+      src="https://cricketstan.github.io/Allrounder-/prame" 
+      allowfullscreen 
+      allow="autoplay; encrypted-media"
+      sandbox="allow-scripts allow-same-origin allow-forms"
+    ></iframe>
   </div>
 
   <div class="section glass">
     <h3>⚡ Join Telegram For Live Updates</h3>
-    <a class="btn primary" href="https://t.me/CricxCrate" target="_blank">Join Telegram</a>
+    <a class="btn primary" href="Https://t.me/+t991_pRD-zs5NzY1" target="_blank">Join Telegram</a>
     <a class="btn" href="https://t.me/CricxCratelinks" target="_blank">All Channels</a>
   </div>
 
@@ -174,15 +180,17 @@ body.popup-active .main-content > :not(.player-wrap){
     <button class="btn" onclick="copyLink()">Copy Link</button>
   </div>
 
-  <a href="https://t.me/CricxCrate" target="_blank" style="text-decoration:none;color:inherit">
+  <a href="Https://t.me/+t991_pRD-zs5NzY1" target="_blank" style="text-decoration:none;color:inherit">
     <div class="banner glass">
       <img src="https://telegram.org/img/t_logo.png">
-      Join @CricxCrate
+      Join Channel
     </div>
   </a>
 </div>
 
 <script>
+fetch("https://dillzycounter.vercel.app/api/hit?key=prime-eng").catch(() => {});
+
 const popup = document.getElementById("popup");
 
 function copyLink(){
@@ -192,7 +200,7 @@ function copyLink(){
 
 function sharePage(){
   if(navigator.share){
-    navigator.share({title:"Live Cricket – CricxCrate", url:location.href});
+    navigator.share({title:"Prime English Live – CricxCrate", url:location.href});
   }
 }
 
@@ -210,33 +218,6 @@ if(sessionStorage.getItem("joined")!=="yes"){
 }else{
   popup.style.display="none";
 }
-
-/* SHAKA PLAYER */
-async function initPlayer(){
-  const video=document.getElementById("video");
-  const player=new shaka.Player(video);
-
-  try{
-    await player.configure({
-      drm:{
-        clearKeys:{
-          "cd2266bd1085a92143007be26296daeb":
-          "1a21a3cbb8e8062c3a82135a47389c2b"
-        }
-      }
-    });
-
-    await player.load(
-      "https://a201aivottlinear-a.akamaihd.net/OTTB/lhr-nitro/live/clients/dash/enc/ryfoddshmd/out/v1/2298afadf64943adb0b44dc540ace1ce/cenc.mpd"
-    );
-
-    console.log("Stream loaded");
-  }catch(e){
-    console.error("Error loading stream:",e);
-  }
-}
-
-document.addEventListener("DOMContentLoaded",initPlayer);
 </script>
 
 </body>
