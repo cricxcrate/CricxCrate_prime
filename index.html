@@ -5,6 +5,9 @@
 <title>CricxCrate – Prime English Live</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mux.js/6.0.1/mux.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.compiled.js"></script>
+
 <style>
 *{box-sizing:border-box}
 body{
@@ -14,7 +17,6 @@ body{
   color:#111827;
   user-select:none;
 }
-iframe{border:none}
 body.popup-active .main-content > :not(.player-wrap){
   filter:blur(6px);
   pointer-events:none;
@@ -44,14 +46,11 @@ body.popup-active .main-content > :not(.player-wrap){
   position: relative;
   aspect-ratio: 16/9;
 }
-.player-wrap iframe{
-  position: absolute;
-  top: 0;
-  left: 0;
+video {
   width: 100%;
   height: 100%;
+  outline: none;
 }
-
 .section{
   max-width:950px;
   margin:14px auto;
@@ -79,16 +78,15 @@ body.popup-active .main-content > :not(.player-wrap){
   cursor:pointer;
   text-decoration:none;
   box-shadow:0 6px 14px rgba(0,0,0,.08);
+  transition: transform 0.2s ease;
 }
 .btn.primary{
   background:#00a8e1;
   color:#fff;
   border:none;
 }
-.btn:active,
-.popup-box a:active,
-.popup-box button:active{
-  transform:scale(.96);
+.btn:active{
+  transform:scale(.95);
 }
 .banner{
   max-width:950px;
@@ -160,12 +158,7 @@ body.popup-active .main-content > :not(.player-wrap){
   <div class="top-bar glass">CricxCrate • Prime English</div>
 
   <div class="player-wrap">
-    <iframe 
-      src="https://cricketstan.github.io/Allrounder-/prame" 
-      allowfullscreen 
-      allow="autoplay; encrypted-media"
-      sandbox="allow-scripts allow-same-origin allow-forms"
-    ></iframe>
+    <video id="video" poster="https://telegra.ph/file/5a544f849e7555627685d.jpg" controls autoplay playsinline></video>
   </div>
 
   <div class="section glass">
@@ -189,8 +182,58 @@ body.popup-active .main-content > :not(.player-wrap){
 </div>
 
 <script>
-fetch("https://dillzycounter.vercel.app/api/hit?key=prime-eng").catch(() => {});
+async function initPlayer() {
+  const video = document.getElementById('video');
+  const player = new shaka.Player(video);
 
+  // Prime English DRM Config
+  player.configure({
+    drm: {
+      clearKeys: {
+        'e2135bf415cfea9ea3e6b26a6fce8fc3': '2671da359a0a860668baca2e34f243f6'
+      }
+    },
+    streaming: {
+      lowLatencyMode: true,
+      jumpLargeGaps: true
+    }
+  });
+
+  // Adding Networking Engine Filter to help with headers
+  player.getNetworkingEngine().registerRequestFilter(function(type, request) {
+    if (type == shaka.net.NetworkingEngine.RequestType.MANIFEST) {
+       // Optional: Set specific headers if the manifest requires them
+    }
+  });
+
+  player.addEventListener('error', (event) => {
+    console.error('Error code', event.detail.code, 'object', event.detail);
+  });
+
+  try {
+    // Prime English MPD URL
+    const mpdUrl = 'https://a120live-pv-ta-amazon.akamaized.net/sin-nitro/live/clients/dash/enc/cjfgjgm8nr/out/v1/4b134e64cd5e4be38f9d00bb96fc4a0a/cenc.mpd';
+    await player.load(mpdUrl);
+    console.log('Prime English Stream Loaded Successfully!');
+  } catch (e) {
+    console.error('Load failed', e);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  shaka.polyfill.installAll(); // Install polyfills
+  if (shaka.Player.isBrowserSupported()) {
+    initPlayer();
+  } else {
+    alert('Browser not supported for this player!');
+  }
+  
+  // Hit counter
+  fetch("https://dillzycounter.vercel.app/api/hit?key=prime-eng")
+    .catch(() => console.log("Tracker offline"));
+});
+
+/* UI LOGIC */
 const popup = document.getElementById("popup");
 
 function copyLink(){
@@ -200,7 +243,10 @@ function copyLink(){
 
 function sharePage(){
   if(navigator.share){
-    navigator.share({title:"Prime English Live – CricxCrate", url:location.href});
+    navigator.share({
+      title: "Prime English Live – CricxCrate", 
+      url: location.href
+    });
   }
 }
 
@@ -209,14 +255,14 @@ function closePopup(){
   setTimeout(()=>{
     popup.style.display="none";
     document.body.classList.remove("popup-active");
-    sessionStorage.setItem("joined","yes");
+    sessionStorage.setItem("joined_eng","yes");
   },300);
 }
 
-if(sessionStorage.getItem("joined")!=="yes"){
+if(sessionStorage.getItem("joined_eng") !== "yes"){
   document.body.classList.add("popup-active");
-}else{
-  popup.style.display="none";
+} else {
+  popup.style.display = "none";
 }
 </script>
 
