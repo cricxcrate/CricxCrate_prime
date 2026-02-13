@@ -5,9 +5,6 @@
 <title>CricxCrate – Prime English Live</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mux.js/6.0.1/mux.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.compiled.js"></script>
-
 <style>
 *{box-sizing:border-box}
 body{
@@ -46,10 +43,11 @@ body.popup-active .main-content > :not(.player-wrap){
   position: relative;
   aspect-ratio: 16/9;
 }
-video {
+/* IFRAME SETUP */
+iframe {
   width: 100%;
   height: 100%;
-  outline: none;
+  border: none;
 }
 .section{
   max-width:950px;
@@ -158,7 +156,10 @@ video {
   <div class="top-bar glass">CricxCrate • Prime English</div>
 
   <div class="player-wrap">
-    <video id="video" poster="https://telegra.ph/file/5a544f849e7555627685d.jpg" controls autoplay playsinline></video>
+    <iframe src="https://allrounder-king.pages.dev/prame" 
+            sandbox="allow-scripts allow-same-origin allow-forms" 
+            allow="autoplay; encrypted-media" 
+            allowfullscreen></iframe>
   </div>
 
   <div class="section glass">
@@ -182,57 +183,6 @@ video {
 </div>
 
 <script>
-async function initPlayer() {
-  const video = document.getElementById('video');
-  const player = new shaka.Player(video);
-
-  // Prime English DRM Config
-  player.configure({
-    drm: {
-      clearKeys: {
-        'e2135bf415cfea9ea3e6b26a6fce8fc3': '2671da359a0a860668baca2e34f243f6'
-      }
-    },
-    streaming: {
-      lowLatencyMode: true,
-      jumpLargeGaps: true
-    }
-  });
-
-  // Adding Networking Engine Filter to help with headers
-  player.getNetworkingEngine().registerRequestFilter(function(type, request) {
-    if (type == shaka.net.NetworkingEngine.RequestType.MANIFEST) {
-       // Optional: Set specific headers if the manifest requires them
-    }
-  });
-
-  player.addEventListener('error', (event) => {
-    console.error('Error code', event.detail.code, 'object', event.detail);
-  });
-
-  try {
-    // Prime English MPD URL
-    const mpdUrl = 'https://a120live-pv-ta-amazon.akamaized.net/sin-nitro/live/clients/dash/enc/cjfgjgm8nr/out/v1/4b134e64cd5e4be38f9d00bb96fc4a0a/cenc.mpd';
-    await player.load(mpdUrl);
-    console.log('Prime English Stream Loaded Successfully!');
-  } catch (e) {
-    console.error('Load failed', e);
-  }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  shaka.polyfill.installAll(); // Install polyfills
-  if (shaka.Player.isBrowserSupported()) {
-    initPlayer();
-  } else {
-    alert('Browser not supported for this player!');
-  }
-  
-  // Hit counter
-  fetch("https://dillzycounter.vercel.app/api/hit?key=prime-eng")
-    .catch(() => console.log("Tracker offline"));
-});
-
 /* UI LOGIC */
 const popup = document.getElementById("popup");
 
@@ -264,6 +214,12 @@ if(sessionStorage.getItem("joined_eng") !== "yes"){
 } else {
   popup.style.display = "none";
 }
+
+/* ANTI-AD SCRIPT */
+window.onbeforeunload = function() {
+    // Prevent redirecting the main page when an ad tries to fire
+    return null; 
+};
 </script>
 
 </body>
