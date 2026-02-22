@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>CricxCrate – Prime English Live</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
 
 <style>
 *{box-sizing:border-box}
@@ -43,7 +44,6 @@ body.popup-active .main-content > :not(.player-wrap){
   position: relative;
   aspect-ratio: 16/9;
 }
-/* IFRAME SETUP */
 iframe {
   width: 100%;
   height: 100%;
@@ -100,7 +100,6 @@ iframe {
 }
 .banner img{width:36px}
 
-/* POPUP */
 .popup{
   position:fixed;
   inset:0;
@@ -156,7 +155,9 @@ iframe {
   <div class="top-bar glass">CricxCrate • Prime English</div>
 
   <div class="player-wrap">
-    <iframe src="https://allrounder-king.pages.dev/prame" 
+    <iframe src="https://allrounder-rho.vercel.app/prame.html" 
+            id="streamFrame"
+            referrerpolicy="no-referrer"
             sandbox="allow-scripts allow-same-origin allow-forms" 
             allow="autoplay; encrypted-media" 
             allowfullscreen></iframe>
@@ -183,7 +184,6 @@ iframe {
 </div>
 
 <script>
-/* UI LOGIC */
 const popup = document.getElementById("popup");
 
 function copyLink(){
@@ -215,10 +215,23 @@ if(sessionStorage.getItem("joined_eng") !== "yes"){
   popup.style.display = "none";
 }
 
-/* ANTI-AD SCRIPT */
+/* 🛡️ ADVANCED AD & REDIRECT PROTECTION */
+let preventRedirect = 0;
 window.onbeforeunload = function() {
-    // Prevent redirecting the main page when an ad tries to fire
-    return null; 
+  preventRedirect++;
+  if (preventRedirect > 0) {
+    // If the iframe tries to redirect the parent page, this stops it
+    setTimeout(() => {
+      window.stop();
+    }, 1);
+  }
+};
+
+// Block Keyboard Shortcuts (F12, Ctrl+U, etc)
+document.onkeydown = function(e) {
+  if (e.keyCode == 123 || (e.ctrlKey && (e.shiftKey && e.keyCode == 73)) || (e.ctrlKey && e.keyCode == 85)) {
+    return false;
+  }
 };
 </script>
 
